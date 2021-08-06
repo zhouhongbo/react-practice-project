@@ -1,20 +1,34 @@
 import React from "react";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { reqLogin } from "../../api";
 import "./login.less";
 import logo from "./images/logo.png";
 
 export default function Login() {
   const [form] = Form.useForm();
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-    // 3. 表单统一验证
-    form.validateFields().then(values => {
-      if (values.password === '123456') return Promise.reject(new Error('密码太简单了！'))
-    }).catch(errorInfo => {
-      message.error(String(errorInfo))
-    })
+  const onFinish = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        // 3. 表单统一验证
+        if (values.password === "123456")
+          return Promise.reject(new Error("密码太简单了！"));
+        // 发送ajax请求
+        let response = await reqLogin(values.username, values.password);
+
+        let result = response.data
+        if (result.status === 0) {
+          message.success('登录成功')
+          console.log(result.data)
+        } else {
+          message.error('用户名或密码错误')
+        }
+      })
+      .catch((errorInfo) => {
+        message.error(String(errorInfo));
+      });
   };
 
   return (
@@ -29,14 +43,20 @@ export default function Login() {
           <Form.Item
             name="username"
             // 2. 自定义验证，点击按钮后才验证
-            rules={[{ required: true, message: "请输入用户名!" }, ({getFieldValue}) => ({
-              validator(_, value) {
-                if (getFieldValue('password') !== value) {
-                  return Promise.resolve()
-                }
-                return Promise.reject(new Error('用户名和密码相同！'))
-              }
-            })]}
+            rules={[
+              { required: true, message: "请输入用户名!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (
+                    getFieldValue("password") !== value ||
+                    getFieldValue("password") === "admin"
+                  ) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("用户名和密码相同！"));
+                },
+              }),
+            ]}
           >
             <Input
               prefix={<UserOutlined style={{ color: "rgba(0, 0, 0, 0.25)" }} />}
@@ -49,8 +69,11 @@ export default function Login() {
             // 1. 声明式验证
             rules={[
               { required: true, message: "请输入密码!" },
-              { type: "string", min: 6, max: 20,  message: "密码6到20位!" },
-              {pattern: /^[a-zA-Z0-9]+$/, message: "由英文、数字或下划线组成"}
+              { type: "string", min: 5, max: 20, message: "密码5到20位!" },
+              {
+                pattern: /^[a-zA-Z0-9]+$/,
+                message: "由英文、数字或下划线组成",
+              },
             ]}
           >
             <Input.Password

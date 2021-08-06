@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import "./App.less";
 
 import Login from "./pages/Login";
@@ -11,7 +11,8 @@ export default class App extends Component {
       <>
         <Switch>
           <Route path="/login" component={Login}></Route>
-          <Route path="/" component={Admin}></Route>
+          <Route path="/admin" component={Admin}></Route>
+          <Redirect to="/login"/>
         </Switch>
       </>
     );

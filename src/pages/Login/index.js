@@ -1,12 +1,15 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import memoryUtil from "../../util/memoryUtil";
 import { reqLogin } from "../../api";
 import "./login.less";
 import logo from "./images/logo.png";
 
 export default function Login() {
   const [form] = Form.useForm();
+  const history = useHistory();
 
   const onFinish = () => {
     form
@@ -16,12 +19,11 @@ export default function Login() {
         if (values.password === "123456")
           return Promise.reject(new Error("密码太简单了！"));
         // 发送ajax请求
-        let response = await reqLogin(values.username, values.password);
-
-        let result = response.data
+        let result = await reqLogin(values.username, values.password);
         if (result.status === 0) {
           message.success('登录成功')
-          console.log(result.data)
+          memoryUtil.user = result.data
+          history.replace('/admin')
         } else {
           message.error('用户名或密码错误')
         }

@@ -1,8 +1,9 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import memoryUtil from "../../util/memoryUtil";
+import storageUtil from "../../util/storageUtil";
 import { reqLogin } from "../../api";
 import "./login.less";
 import logo from "./images/logo.png";
@@ -22,7 +23,8 @@ export default function Login() {
         let result = await reqLogin(values.username, values.password);
         if (result.status === 0) {
           message.success('登录成功')
-          memoryUtil.user = result.data
+          // memoryUtil.user = result.data
+          storageUtil.setUser(result.data)
           history.replace('/admin')
         } else {
           message.error('用户名或密码错误')
@@ -32,6 +34,12 @@ export default function Login() {
         message.error(String(errorInfo));
       });
   };
+
+  // 判断用户是否登录
+  const user = memoryUtil.user
+  if (user && user._id) {
+    return <Redirect to="/admin" />
+  }
 
   return (
     <div className="login">

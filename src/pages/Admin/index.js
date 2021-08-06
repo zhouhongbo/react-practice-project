@@ -7,5 +7,5 @@ export default function Admin() {
   if (!user || !user._id) {
     return <Redirect to="/login" />
   }
-  return <div>欢迎 {memoryUtil.user.username}</div>;
+  return <div>欢迎 {user.username}</div>;
 }

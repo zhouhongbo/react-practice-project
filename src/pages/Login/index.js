@@ -23,7 +23,7 @@ export default function Login() {
         let result = await reqLogin(values.username, values.password);
         if (result.status === 0) {
           message.success('登录成功')
-          // memoryUtil.user = result.data
+          memoryUtil.user = result.data
           storageUtil.setUser(result.data)
           history.replace('/admin')
         } else {

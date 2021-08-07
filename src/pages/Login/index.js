@@ -6,7 +6,7 @@ import memoryUtil from "../../util/memoryUtil";
 import storageUtil from "../../util/storageUtil";
 import { reqLogin } from "../../api";
 import "./login.less";
-import logo from "./images/logo.png";
+import logo from "../../assets/images/logo.png"
 
 export default function Login() {
   const [form] = Form.useForm();

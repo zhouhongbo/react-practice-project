@@ -27,7 +27,7 @@ export default function Admin() {
       </Sider>
       <Layout>
         <Header></Header>
-        <Content style={{ backgroundColor: "#fff" }}>
+        <Content style={{ backgroundColor: "#fff", margin: '20px' }}>
           <Switch>
             <Route path="/home" component={Home}/>
             <Route path="/products/category" component={Category}/>

@@ -5,7 +5,6 @@ import { reqCategorys } from "../../api";
 
 export default function Category() {
   const [categorys, setCategorys] = useState([]);
-  const [subCategorys, setSubCategorys] = useState([]);
   const [loading, setLoading] = useState(false);
   const [parentId, setParentId] = useState("0");
   const [parentName, setParentName] = useState("");
@@ -23,8 +22,7 @@ export default function Category() {
     setLoading(true);
     const result = await reqCategorys(parentId);
     if (result.status === 0) {
-      if (parentId === "0") setCategorys(result.data);
-      else setSubCategorys(result.data);
+      setCategorys(result.data);
     } else {
       message.error("获取列表失败！");
     }
@@ -71,7 +69,7 @@ export default function Category() {
     >
       <Table
         bordered
-        dataSource={parentId === "0" ? categorys : subCategorys}
+        dataSource={categorys}
         columns={columns}
         rowKey="_id"
         pagination={{ defaultPageSize: 5, showQuickJumper: true }}

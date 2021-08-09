@@ -61,7 +61,7 @@ export default function Header() {
     <div className="header">
       <div className="header-top">
         <span>欢迎，{memoryUtil.user.username}</span>
-        <a href="#" onClick={logout}>
+        <a onClick={logout}>
           退出
         </a>
       </div>

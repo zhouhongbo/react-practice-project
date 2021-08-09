@@ -1,60 +1,69 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Menu } from "antd";
-import {
-  AppstoreOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  PieChartOutlined,
-  DesktopOutlined,
-  ContainerOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
 import "./index.less";
 import logo from "../../assets/images/logo.png";
-import menuList from "../../route/route"
+import menuList from "../../route/route";
 
 const { SubMenu } = Menu;
 
 export default function LeftNav() {
+  // 使用数组的map方法
+  const renderMenuMap = (menuList) => {
+    return menuList.map((item) => {
+      if (item.children) {
+        return (
+          <SubMenu key={item.key} title={item.title} icon={<item.icon />}>
+            {renderMenuMap(item.children)}
+          </SubMenu>
+        );
+      } else {
+        return (
+          <Menu.Item key={item.key} icon={<item.icon />}>
+            <Link to={item.key}>{item.title}</Link>
+          </Menu.Item>
+        );
+      }
+    });
+  };
+  // 使用数组的reduce方法
+  const renderMenuReduce = (menuList) => {
+    return menuList.reduce((result, item) => {
+      if (item.children) {
+        result.push(
+          <SubMenu key={item.key} title={item.title} icon={<item.icon />}>
+            {renderMenuReduce(item.children)}
+          </SubMenu>
+        );
+      } else {
+        result.push(
+          <Menu.Item key={item.key} icon={<item.icon />}>
+            <Link to={item.key}>{item.title}</Link>
+          </Menu.Item>
+        );
+      }
+      return result;
+    }, []);
+  };
+
+  // 获取当前路径
+  const history = useHistory();
+  let path = history.location.pathname;
+
   return (
-    <div to="/" className="left-nav">
-      <Link className="left-nav-header">
+    <div className="left-nav">
+      <Link className="left-nav-header" to="/">
         <img src={logo} alt="logo" />
         <h1>硅谷后台</h1>
       </Link>
       <Menu
         mode="inline"
         theme="dark"
+        selectedKeys={[path]}
+        defaultOpenKeys={['/products', '/charts']}
       >
-        <Menu.Item key="1" icon={<PieChartOutlined />}>
-          <Link to="/home">首页</Link>
-        </Menu.Item>
-        <SubMenu key="sub1" icon={<MailOutlined />} title="商品">
-          <Menu.Item key="2">
-            <Link to="/category">品类管理</Link>
-          </Menu.Item>
-          <Menu.Item key="3">
-            <Link to="/product">商品管理</Link>
-          </Menu.Item>
-        </SubMenu>
-        <Menu.Item key="4">
-          <Link to="/user">用户管理</Link>
-        </Menu.Item>
-        <Menu.Item key="5">
-          <Link to="/role">角色管理</Link>
-        </Menu.Item>
-        <SubMenu key="sub2" icon={<MailOutlined />} title="图形图表">
-          <Menu.Item key="6">
-            <Link to="/charts/bar">柱形图</Link>
-          </Menu.Item>
-          <Menu.Item key="7">
-            <Link to="/charts/line">折线图</Link>
-          </Menu.Item>
-          <Menu.Item key="8">
-            <Link to="/charts/pie">饼图</Link>
-          </Menu.Item>
-        </SubMenu>
+        {renderMenuReduce(menuList)}
+        {/* {renderMenuMap(menuList)} */}
       </Menu>
     </div>
   );

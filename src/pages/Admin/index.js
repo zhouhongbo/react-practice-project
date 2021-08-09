@@ -30,8 +30,8 @@ export default function Admin() {
         <Content style={{ backgroundColor: "#fff" }}>
           <Switch>
             <Route path="/home" component={Home}/>
-            <Route path="/category" component={Category}/>
-            <Route path="/product" component={Product}/>
+            <Route path="/products/category" component={Category}/>
+            <Route path="/products/product" component={Product}/>
             <Route path="/role" component={Role}/>
             <Route path="/user" component={User}/>
             <Route path="/charts/bar" component={Bar}/>

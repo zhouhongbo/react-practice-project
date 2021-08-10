@@ -1,0 +1,21 @@
+import React, { useEffect } from "react";
+import { Form, Input } from "antd";
+
+const Item = Form.Item;
+
+export default function UpdateForm(props) {
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    props.getUpdateForm(form);
+    form.setFieldsValue({ categoryName: props.categoryName });
+  });
+
+  return (
+    <Form form={form}>
+      <Item name="categoryName">
+        <Input />
+      </Item>
+    </Form>
+  );
+}

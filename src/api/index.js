@@ -10,13 +10,34 @@ export const reqLogin = (username, password) =>
 export const reqAddUser = (user) => ajax("/manage/user/add", user, "POST");
 
 // 获取分类列表
-export const reqCategorys = (parentId) => ajax("/manage/category/list", {parentId})
+export const reqCategorys = (parentId) =>
+  ajax("/manage/category/list", { parentId });
 
 // 添加分类
-export const reqAddCategory = (parentId, categoryName) => ajax("/manage/category/add", {parentId, categoryName}, "POST")
+export const reqAddCategory = (parentId, categoryName) =>
+  ajax("/manage/category/add", { parentId, categoryName }, "POST");
 
 // 更新分类
-export const reqUpdateCategory = (categoryId, categoryName) => ajax("/manage/category/update", {categoryId, categoryName}, "POST")
+export const reqUpdateCategory = (categoryId, categoryName) =>
+  ajax("/manage/category/update", { categoryId, categoryName }, "POST");
+
+// 获取商品分页列表
+export const reqProducts = (pageNum, pageSize) =>
+  ajax("/manage/product/list", { pageNum, pageSize });
+
+// 搜索商品分页列表 searchType: productName / productDesc
+export const reqSearchProducts = ({
+  pageNum,
+  pageSize,
+  searchName,
+  searchType,
+}) => ajax("/manage/product/search", { pageNum, pageSize, [searchType]: searchName });
+
+// 根据id获取分类
+export const reqCategory = (categoryId) => ajax("/manage/category/info", {categoryId});
+
+// 更新商品的状态
+export const reqUpdateStatus = (productId, status) => ajax("/manage/product/updateStatus", {productId, status}, "POST")
 
 // jsonp请求天气
 export const reqWeather = (city) => {

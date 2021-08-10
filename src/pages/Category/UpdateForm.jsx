@@ -13,7 +13,10 @@ export default function UpdateForm(props) {
 
   return (
     <Form form={form}>
-      <Item name="categoryName">
+      <Item
+        name="categoryName"
+        rules={[{ required: true, message: "请输入分类名" }]}
+      >
         <Input />
       </Item>
     </Form>

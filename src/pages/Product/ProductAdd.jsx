@@ -1,20 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router";
-import { Card, Form, Input, Cascader, Upload, Button } from "antd";
+import { Card, Form, Input, Cascader, Button, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
 import { reqCategorys } from "../../api";
+import PicturesWall from "./PicturesWall";
+import RichTextEditor from "./RichTextEditor";
+import { reqAddorUpdateProduct } from "../../api";
 
 const Item = Form.Item;
 const TextArea = Input.TextArea;
 
-export default function ProductAdd() {
+export default function ProductAdd(props) {
   const history = useHistory();
+  const [form] = Form.useForm();
+
+  const pwRef = useRef();
+  const rteRef = useRef();
 
   const [options, setOptions] = useState([]);
+  const [isUpdate, setIsupdate] = useState(false);
+  const [product, setProduct] = useState({});
 
   useEffect(() => {
     getCategorys("0");
+  }, []);
+
+  useEffect(() => {
+    // 修改商品时运行
+    if (props.location.state) {
+      setIsupdate(true);
+      setProduct(props.location.state.product);
+
+      const { name, desc, price, pCategoryId, categoryId } =
+        props.location.state.product;
+      form.setFieldsValue({
+        name,
+        desc,
+        price,
+        categoryIds:
+          pCategoryId === "0" ? [categoryId] : [pCategoryId, categoryId],
+      });
+    }
   }, []);
 
   const getCategorys = async (parentId) => {
@@ -29,7 +56,7 @@ export default function ProductAdd() {
     }
   };
 
-  const initOptions = (categorys) => {
+  const initOptions = async (categorys) => {
     const myOptions = categorys.map((item) => {
       return {
         value: item._id,
@@ -37,17 +64,50 @@ export default function ProductAdd() {
         isLeaf: false,
       };
     });
+
+    // 二级分类商品修改时
+    // TODO: 验证
+    if (isUpdate && product.pCategoryId !== '0') {
+      const subCategorys = await getCategorys(product.pCategoryId);
+      const childOptions = subCategorys.map((item) => ({
+        value: item._id,
+        label: item.name,
+      }));
+      const targetOption = myOptions.find(option => option.value === product.pCategoryId)
+      targetOption = childOptions;
+    }
+
     setOptions(myOptions);
   };
 
-  const onFinish = (values) => {
-    // console.log(values);
+  const onFinish = async (values) => {
+    // 收集数据
+    const {name, desc, price, categoryIds} = values;
+    let pCategoryId, categoryId;
+    if (categoryIds.length === 1) {
+      pCategoryId = '0';
+      categoryId = categoryIds[0];
+    } else {
+      [pCategoryId, categoryId] = categoryIds;
+    }
+    const imgs = pwRef.current.getImgs();
+    const detail = rteRef.current.getDetail();
+    const newProduct = {name, desc, price, imgs, detail, pCategoryId, categoryId};
+    if (isUpdate) newProduct._id = product._id;
+
+    // 发送请求
+    const result = await reqAddorUpdateProduct(newProduct);
+    if (result.status === 0) {
+      message.success(isUpdate ? '更新成功' : '添加成功');
+      history.goBack();
+    } else {
+      message.error(isUpdate ? '更新失败' : '添加失败');
+    }
   };
 
   const loadData = async (selectedOptions) => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
     targetOption.loading = true;
-    debugger
 
     // 根据选中的分类，获取下一级分类列表
     const subCategorys = await getCategorys(targetOption.value);
@@ -72,7 +132,7 @@ export default function ProductAdd() {
           style={{ color: "green", marginRight: 15, fontSize: 20 }}
         />
       </a>
-      <span>添加商品</span>
+      <span>{isUpdate ? "修改商品" : "添加商品"}</span>
     </span>
   );
 
@@ -84,7 +144,7 @@ export default function ProductAdd() {
   return (
     <div>
       <Card title={title}>
-        <Form {...layout} onFinish={onFinish}>
+        <Form {...layout} onFinish={onFinish} form={form}>
           <Item
             label="商品名称"
             name="name"
@@ -134,17 +194,23 @@ export default function ProductAdd() {
           >
             <Input type="number" addonAfter="元" />
           </Item>
-          <Item label="商品分类">
-            <Cascader
-              options={options}
-              loadData={loadData}
-            />
+          <Item
+            label="商品分类"
+            name="categoryIds"
+            rules={[
+              {
+                required: true,
+                message: "必须指定商品分类",
+              },
+            ]}
+          >
+            <Cascader options={options} loadData={loadData} />
           </Item>
           <Item label="商品图片">
-            <div></div>
+            <PicturesWall ref={pwRef} imgs={product.imgs}/>
           </Item>
-          <Item label="商品详情">
-            <div></div>
+          <Item label="商品详情" wrapperCol={{span: 17}}>
+            <RichTextEditor ref={rteRef} detail={product.detail}/>
           </Item>
           <Item>
             <Button type="primary" htmlType="submit">

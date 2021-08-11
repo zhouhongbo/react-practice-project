@@ -131,7 +131,7 @@ export default function ProductHome() {
             >
               详情
             </a>
-            <a>修改</a>
+            <a onClick={() => history.push('/products/product/addupdate', { product })}>修改</a>
           </Space>
         );
       },

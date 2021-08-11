@@ -8,15 +8,10 @@ import { reqCategorys } from "../../api";
 const Item = Form.Item;
 const TextArea = Input.TextArea;
 
-const layout = {
-  labelCol: { span: 1 },
-  wrapperCol: { span: 5 },
-};
-
 export default function ProductAdd() {
   const history = useHistory();
 
-  const [options, setOptions] = React.useState([]);
+  const [options, setOptions] = useState([]);
 
   useEffect(() => {
     getCategorys("0");
@@ -52,6 +47,7 @@ export default function ProductAdd() {
   const loadData = async (selectedOptions) => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
     targetOption.loading = true;
+    debugger
 
     // 根据选中的分类，获取下一级分类列表
     const subCategorys = await getCategorys(targetOption.value);
@@ -65,10 +61,8 @@ export default function ProductAdd() {
     } else {
       targetOption.isLeaf = true;
     }
-  };
 
-  const onChange = (value, selectedOptions) => {
-    // console.log(value, selectedOptions);
+    setOptions([...options]);
   };
 
   const title = (
@@ -81,6 +75,11 @@ export default function ProductAdd() {
       <span>添加商品</span>
     </span>
   );
+
+  const layout = {
+    labelCol: { span: 1 },
+    wrapperCol: { span: 5 },
+  };
 
   return (
     <div>
@@ -139,8 +138,6 @@ export default function ProductAdd() {
             <Cascader
               options={options}
               loadData={loadData}
-              onChange={onChange}
-              changeOnSelect
             />
           </Item>
           <Item label="商品图片">

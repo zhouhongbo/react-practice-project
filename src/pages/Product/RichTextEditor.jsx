@@ -15,8 +15,6 @@ export default class RichTextEditor extends Component {
     super(props);
 
     // 修改时显示原来的内容
-    // TODO：检查
-    console.log(props)
     const html = props.detail;
     if (html) {
       const contentBlock = htmlToDraft(html);

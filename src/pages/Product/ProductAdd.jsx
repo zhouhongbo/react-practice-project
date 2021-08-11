@@ -20,7 +20,7 @@ export default function ProductAdd(props) {
 
   const [options, setOptions] = useState([]);
   const [isUpdate, setIsupdate] = useState(false);
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState(props.location.state ? props.location.state.product : {});
 
   useEffect(() => {
     getCategorys("0");
@@ -30,7 +30,6 @@ export default function ProductAdd(props) {
     // 修改商品时运行
     if (props.location.state) {
       setIsupdate(true);
-      setProduct(props.location.state.product);
 
       const { name, desc, price, pCategoryId, categoryId } =
         props.location.state.product;

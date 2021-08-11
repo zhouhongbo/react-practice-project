@@ -24,7 +24,6 @@ class PicturesWall extends React.Component {
     super(props);
 
     // 修改图片时显示原来的图片
-    // TODO：检查
     let fileList = [];
     const {imgs} = props;
     if (imgs && imgs.length > 0) {

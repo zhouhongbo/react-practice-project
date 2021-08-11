@@ -20,25 +20,12 @@ export default function ProductAdd(props) {
 
   const [options, setOptions] = useState([]);
   const [isUpdate, setIsupdate] = useState(props.location.state ? true : false);
-  const [product, setProduct] = useState(props.location.state ? props.location.state.product : {});
+  const [product, setProduct] = useState(
+    props.location.state ? props.location.state.product : {}
+  );
 
   useEffect(() => {
     getCategorys("0");
-  }, []);
-
-  useEffect(() => {
-    // 修改商品时运行
-    if (props.location.state) {
-      const { name, desc, price, pCategoryId, categoryId } =
-        props.location.state.product;
-      form.setFieldsValue({
-        name,
-        desc,
-        price,
-        categoryIds:
-          pCategoryId === "0" ? [categoryId] : [pCategoryId, categoryId],
-      });
-    }
   }, []);
 
   const getCategorys = async (parentId) => {
@@ -63,13 +50,15 @@ export default function ProductAdd(props) {
     });
 
     // 二级分类商品修改时
-    if ( isUpdate && product.pCategoryId !== '0') {
+    if (isUpdate && product.pCategoryId !== "0") {
       const subCategorys = await getCategorys(product.pCategoryId);
       const childOptions = subCategorys.map((item) => ({
         value: item._id,
         label: item.name,
       }));
-      const targetOption = myOptions.find(option => option.value === product.pCategoryId)
+      const targetOption = myOptions.find(
+        (option) => option.value === product.pCategoryId
+      );
       targetOption.children = childOptions;
     }
 
@@ -78,26 +67,34 @@ export default function ProductAdd(props) {
 
   const onFinish = async (values) => {
     // 收集数据
-    const {name, desc, price, categoryIds} = values;
+    const { name, desc, price, categoryIds } = values;
     let pCategoryId, categoryId;
     if (categoryIds.length === 1) {
-      pCategoryId = '0';
+      pCategoryId = "0";
       categoryId = categoryIds[0];
     } else {
       [pCategoryId, categoryId] = categoryIds;
     }
     const imgs = pwRef.current.getImgs();
     const detail = rteRef.current.getDetail();
-    const newProduct = {name, desc, price, imgs, detail, pCategoryId, categoryId};
+    const newProduct = {
+      name,
+      desc,
+      price,
+      imgs,
+      detail,
+      pCategoryId,
+      categoryId,
+    };
     if (isUpdate) newProduct._id = product._id;
 
     // 发送请求
     const result = await reqAddorUpdateProduct(newProduct);
     if (result.status === 0) {
-      message.success(isUpdate ? '更新成功' : '添加成功');
+      message.success(isUpdate ? "更新成功" : "添加成功");
       history.goBack();
     } else {
-      message.error(isUpdate ? '更新失败' : '添加失败');
+      message.error(isUpdate ? "更新失败" : "添加失败");
     }
   };
 
@@ -137,6 +134,12 @@ export default function ProductAdd(props) {
     wrapperCol: { span: 5 },
   };
 
+  let initCategoryIds = [];
+  if (isUpdate) {
+    if (product.pCategoryId === "0") initCategoryIds = [product.categoryId];
+    else initCategoryIds = [product.pCategoryId, product.categoryId];
+  }
+
   return (
     <div>
       <Card title={title}>
@@ -144,6 +147,7 @@ export default function ProductAdd(props) {
           <Item
             label="商品名称"
             name="name"
+            initialValue={product.name}
             rules={[
               {
                 required: true,
@@ -156,6 +160,7 @@ export default function ProductAdd(props) {
           <Item
             label="商品描述"
             name="desc"
+            initialValue={product.desc}
             rules={[
               {
                 required: true,
@@ -168,6 +173,7 @@ export default function ProductAdd(props) {
           <Item
             label="商品价格"
             name="price"
+            initialValue={product.price}
             rules={[
               {
                 required: true,
@@ -193,6 +199,7 @@ export default function ProductAdd(props) {
           <Item
             label="商品分类"
             name="categoryIds"
+            initialValue={initCategoryIds}
             rules={[
               {
                 required: true,
@@ -203,10 +210,10 @@ export default function ProductAdd(props) {
             <Cascader options={options} loadData={loadData} />
           </Item>
           <Item label="商品图片">
-            <PicturesWall ref={pwRef} imgs={product.imgs}/>
+            <PicturesWall ref={pwRef} imgs={product.imgs} />
           </Item>
-          <Item label="商品详情" wrapperCol={{span: 17}}>
-            <RichTextEditor ref={rteRef} detail={product.detail}/>
+          <Item label="商品详情" wrapperCol={{ span: 17 }}>
+            <RichTextEditor ref={rteRef} detail={product.detail} />
           </Item>
           <Item>
             <Button type="primary" htmlType="submit">

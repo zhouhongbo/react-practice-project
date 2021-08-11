@@ -19,7 +19,7 @@ export default function ProductAdd(props) {
   const rteRef = useRef();
 
   const [options, setOptions] = useState([]);
-  const [isUpdate, setIsupdate] = useState(false);
+  const [isUpdate, setIsupdate] = useState(props.location.state ? true : false);
   const [product, setProduct] = useState(props.location.state ? props.location.state.product : {});
 
   useEffect(() => {
@@ -29,8 +29,6 @@ export default function ProductAdd(props) {
   useEffect(() => {
     // 修改商品时运行
     if (props.location.state) {
-      setIsupdate(true);
-
       const { name, desc, price, pCategoryId, categoryId } =
         props.location.state.product;
       form.setFieldsValue({
@@ -65,15 +63,14 @@ export default function ProductAdd(props) {
     });
 
     // 二级分类商品修改时
-    // TODO: 验证
-    if (isUpdate && product.pCategoryId !== '0') {
+    if ( isUpdate && product.pCategoryId !== '0') {
       const subCategorys = await getCategorys(product.pCategoryId);
       const childOptions = subCategorys.map((item) => ({
         value: item._id,
         label: item.name,
       }));
       const targetOption = myOptions.find(option => option.value === product.pCategoryId)
-      targetOption = childOptions;
+      targetOption.children = childOptions;
     }
 
     setOptions(myOptions);

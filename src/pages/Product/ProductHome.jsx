@@ -79,7 +79,7 @@ export default function ProductHome() {
     </span>
   );
   const extra = (
-    <Button type="primary" icon={<PlusOutlined />}>
+    <Button type="primary" icon={<PlusOutlined />} onClick={() => history.push('/products/product/addupdate')}>
       添加商品
     </Button>
   );

@@ -50,6 +50,10 @@ export default function LeftNav() {
   const history = useHistory();
   let path = history.location.pathname;
 
+  if (path.indexOf('/products/product') === 0) {
+    path = '/products/product';
+  }
+
   return (
     <div className="left-nav">
       <Link className="left-nav-header" to="/">

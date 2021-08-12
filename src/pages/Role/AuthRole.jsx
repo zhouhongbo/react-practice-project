@@ -28,10 +28,12 @@ function AuthRole(props, ref) {
       return {
         title: item.title,
         key: item.key,
+        checkable: !item.isPublic,
         children: item.children.map((i) => {
           return {
             title: i.title,
             key: i.key,
+            checkable: !item.isPublic
           };
         }),
       };
@@ -39,6 +41,7 @@ function AuthRole(props, ref) {
       return {
         title: item.title,
         key: item.key,
+        checkable: !item.isPublic
       };
     }
   });

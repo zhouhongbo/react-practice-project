@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router";
 import { Card, Button, Table, Space, Modal, message } from "antd";
 import moment from "moment";
 
@@ -8,9 +9,11 @@ import AddRole from "./AddRole";
 import AuthRole from "./AuthRole";
 import { reqAddRole, reqUpdateRole } from "../../api";
 import memoryUtil from "../../util/memoryUtil"
+import storageUtil from "../../util/storageUtil"
 
 export default function Role() {
   const ref = useRef();
+  const history = useHistory();
 
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState({});
@@ -62,11 +65,19 @@ export default function Role() {
     };
     const result = await reqUpdateRole(updateParam);
     if (result.status === 0){
-      message.success('更新成功');
-      getRoles();
-      // 更新role
-      role.menus = updateParam.menus;
-      setRole(role);
+      // 如果更新了自己的权限，强制退出登录
+      if (updateParam._id === memoryUtil.user.role_id) {
+        message.info('更新了权限，请重新登录');
+        memoryUtil.user = {};
+        storageUtil.removeUser();
+        history.replace('/login');
+      } else {
+        message.success('更新成功');
+        getRoles();
+        // 更新role
+        role.menus = updateParam.menus;
+        setRole(role);
+      }
     } else {
       message.error('更新失败');
     }

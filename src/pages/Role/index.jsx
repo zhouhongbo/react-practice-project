@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router";
+import { connect } from "react-redux";
 import { Card, Button, Table, Space, Modal, message } from "antd";
 import moment from "moment";
 
@@ -8,12 +8,10 @@ import { reqRoles } from "../../api";
 import AddRole from "./AddRole";
 import AuthRole from "./AuthRole";
 import { reqAddRole, reqUpdateRole } from "../../api";
-import memoryUtil from "../../util/memoryUtil"
-import storageUtil from "../../util/storageUtil"
+import {logout} from "../../store/actions"
 
-export default function Role() {
+function Role(props) {
   const ref = useRef();
-  const history = useHistory();
 
   const [roles, setRoles] = useState([]);
   const [role, setRole] = useState({});
@@ -61,16 +59,14 @@ export default function Role() {
       _id: role._id,
       menus: ref.current.getMenus(),
       auth_time: Date.now(),
-      auth_name: memoryUtil.user.username
+      auth_name: props.user.username
     };
     const result = await reqUpdateRole(updateParam);
     if (result.status === 0){
       // 如果更新了自己的权限，强制退出登录
-      if (updateParam._id === memoryUtil.user.role_id) {
+      if (updateParam._id === props.user.role_id) {
         message.info('更新了权限，请重新登录');
-        memoryUtil.user = {};
-        storageUtil.removeUser();
-        history.replace('/login');
+        props.logout();
       } else {
         message.success('更新成功');
         getRoles();
@@ -148,3 +144,7 @@ export default function Role() {
     </Card>
   );
 }
+export default connect(
+  state => ({user: state.user}),
+  {logout}
+)(Role);

@@ -1,34 +1,26 @@
 import React from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import memoryUtil from "../../util/memoryUtil";
-import storageUtil from "../../util/storageUtil";
-import { reqLogin } from "../../api";
-import "./login.less";
-import logo from "../../assets/images/logo.png"
 
-export default function Login() {
+import "./login.less";
+import logo from "../../assets/images/logo.png";
+import { login } from "../../store/actions";
+
+function Login(props) {
   const [form] = Form.useForm();
-  const history = useHistory();
 
   const onFinish = () => {
     form
       .validateFields()
       .then(async (values) => {
-        // 3. 表单统一验证
-        if (values.password === "123456")
+        const { username, password } = values;
+
+        if (password === "123456")
           return Promise.reject(new Error("密码太简单了！"));
-        // 发送ajax请求
-        let result = await reqLogin(values.username, values.password);
-        if (result.status === 0) {
-          message.success('登录成功')
-          memoryUtil.user = result.data
-          storageUtil.setUser(result.data)
-          history.replace('/home')
-        } else {
-          message.error('用户名或密码错误')
-        }
+
+        props.login(username, password);
       })
       .catch((errorInfo) => {
         message.error(String(errorInfo));
@@ -36,10 +28,12 @@ export default function Login() {
   };
 
   // 判断用户是否登录
-  const user = memoryUtil.user
+  const user = props.user;
   if (user && user._id) {
-    return <Redirect to="/home" />
+    return <Redirect to="/home" />;
   }
+
+  const { errorMsg } = user;
 
   return (
     <div className="login">
@@ -48,6 +42,9 @@ export default function Login() {
         <h1>React项目：后台管理系统</h1>
       </header>
       <section className="login-content">
+        <div className={errorMsg ? "error-msg show" : "error-msg"}>
+          {errorMsg}
+        </div>
         <h2>用户登录</h2>
         <Form className="login-form" form={form} onFinish={onFinish}>
           <Form.Item
@@ -106,3 +103,4 @@ export default function Login() {
     </div>
   );
 }
+export default connect((state) => ({ user: state.user }), { login })(Login);

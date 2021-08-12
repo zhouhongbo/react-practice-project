@@ -1,7 +1,8 @@
 import React from "react";
 import { Redirect, Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
 import { Layout } from "antd";
-import memoryUtil from "../../util/memoryUtil";
+
 import Header from "../../components/Header";
 import LeftNav from "../../components/LeftNav";
 import Category from "../Category";
@@ -15,8 +16,8 @@ import User from "../User";
 
 const { Footer, Sider, Content } = Layout;
 
-export default function Admin() {
-  const user = memoryUtil.user;
+function Admin(props) {
+  const user = props.user;
   if (!user || !user._id) {
     return <Redirect to="/login" />;
   }
@@ -47,3 +48,4 @@ export default function Admin() {
     </Layout>
   );
 }
+export default connect(state => ({user: state.user}), {})(Admin);

@@ -6,7 +6,6 @@ import { Menu } from "antd";
 import "./index.less";
 import logo from "../../assets/images/logo.png";
 import menuList from "../../route/route";
-import memoryUtil from "../../util/memoryUtil";
 import { setHeadTitle } from "../../store/actions";
 
 const { SubMenu } = Menu;
@@ -24,8 +23,8 @@ function LeftNav(props) {
   }, [])
 
   const hasAuth = (item) => {
-    const menus = memoryUtil.user.role.menus;
-    const username = memoryUtil.user.username;
+    const menus = props.user.role.menus;
+    const username = props.user.username;
     if (menus.includes(item.key) || item.isPublic || username === 'admin') {
       return true;
     } else if (item.children) {
@@ -78,6 +77,6 @@ function LeftNav(props) {
   );
 }
 export default connect(
-  state => ({}),
+  state => ({user: state.user}),
   {setHeadTitle}
 )(LeftNav);

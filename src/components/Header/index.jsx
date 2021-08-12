@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import moment from "moment";
 import { Modal } from "antd";
 
-import memoryUtil from "../../util/memoryUtil";
-import storageUtil from "../../util/storageUtil";
 import { reqWeather } from "../../api";
+import { logout } from "../../store/actions";
 import "./index.less";
 
 function Header(props) {
-  const history = useHistory();
-
   const [time, setTime] = useState(moment().format("YYYY-MM-DD h:mm:ss"));
   const [weather, setWeather] = useState("");
 
@@ -35,9 +31,7 @@ function Header(props) {
     Modal.confirm({
       content: "确认退出吗？",
       onOk() {
-        memoryUtil.user = {};
-        storageUtil.removeUser();
-        history.replace("/login");
+        props.logout();
       },
     });
   };
@@ -45,7 +39,7 @@ function Header(props) {
   return (
     <div className="header">
       <div className="header-top">
-        <span>欢迎，{memoryUtil.user.username}</span>
+        <span>欢迎，{props.user.username}</span>
         <a onClick={logout}>退出</a>
       </div>
       <div className="header-bottom">
@@ -59,4 +53,10 @@ function Header(props) {
   );
 }
 
-export default connect((state) => ({ headTitle: state.headTitle }))(Header);
+export default connect(
+  (state) => ({
+    headTitle: state.headTitle,
+    user: state.user,
+  }),
+  { logout }
+)(Header);

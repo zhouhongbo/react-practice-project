@@ -121,7 +121,7 @@ export default function Role() {
         bordered
         dataSource={roles}
         columns={columns}
-        rowSelection={{ type: "radio", selectedRowKeys: [role._id] }}
+        rowSelection={{ type: "radio", selectedRowKeys: [role._id], onSelect: (role) => setRole(role) }}
         rowKey="_id"
         pagination={{ defaultPageSize: PAGE_SIZE }}
         onRow={onRow}

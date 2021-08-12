@@ -2,6 +2,8 @@
   1. 静态界面
   2. 获取用户列表
   3. 添加用户
+  4. 修改用户
+  5. 删除用户
  */
 import React, { useState, useEffect, useRef } from "react";
 import { Card, Table, Button, Space, Modal, message } from "antd";
@@ -13,8 +15,10 @@ import UpdateUser from "./UpdateUser";
 
 export default function User() {
   const addRef = useRef();
+  const updateRef = useRef();
 
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState({});
   const [roles, setRoles] = useState([]);
   const [isAdd, setIsAdd] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
@@ -51,7 +55,6 @@ export default function User() {
 
     const addForm = addRef.current.getAddForm();
     addForm.validateFields().then(async (values) => {
-      console.log(values);
       const result = await reqAddUser(values);
       if (result.status === 0) {
         message.success("添加用户成功");
@@ -65,6 +68,17 @@ export default function User() {
 
   const updateUser = () => {
     setIsUpdate(false);
+
+    const updateForm = updateRef.current.getUpdateForm();
+    updateForm.validateFields().then(async (values) => {
+      const result = await reqUpdateUser({...values, _id: user._id});
+      if (result.status === 0) {
+        message.success("修改用户成功");
+        getUsers();
+      } else {
+        message.error("修改用户失败");
+      }
+    });
   };
 
   const columns = [
@@ -97,7 +111,10 @@ export default function User() {
       title: "操作",
       render: (user) => (
         <Space>
-          <a onClick={() => setIsUpdate(true)}>修改</a>
+          <a onClick={() => {
+            setIsUpdate(true);
+            setUser(user);
+          }}>修改</a>
           <a>删除</a>
         </Space>
       ),
@@ -125,7 +142,7 @@ export default function User() {
         onOk={updateUser}
         closable={false}
       >
-        <UpdateUser />
+        <UpdateUser ref={updateRef} roles={roles} user={user}/>
       </Modal>
     </Card>
   );

@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useState, useEffect, useImperativeHandle } from "react";
 import { Card, Input, Form, Select } from "antd";
 
 const { Item } = Form;
 const { Option } = Select;
 
-export default function UpdateUser(props) {
+function UpdateUser(props, ref) {
+  const [updateForm] = Form.useForm();
+
+  useEffect(() => {
+    updateForm.resetFields();
+    updateForm.setFieldsValue(props.user);
+  }, [props.user]);
+
+  useImperativeHandle(ref, () => ({
+    getUpdateForm: () => updateForm,
+  }));
+
   return (
     <Card title="修改用户信息">
-      <Form labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
+      <Form form={updateForm} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
         <Item label="用户名" name="username">
           <Input />
         </Item>
@@ -19,10 +30,15 @@ export default function UpdateUser(props) {
         </Item>
         <Item label="所属角色" name="role_id">
           <Select>
-            <Option value="1">管理员</Option>
+            {props.roles.map((role) => (
+              <Option value={role._id} key={role._id}>
+                {role.name}
+              </Option>
+            ))}
           </Select>
         </Item>
       </Form>
     </Card>
   );
 }
+export default React.forwardRef(UpdateUser);

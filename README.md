@@ -19,3 +19,11 @@
 
 ## 父组件调用子组件的方法
   在父组件中通过ref获得子组件对象，然后调用其方法
+
+## 给函数式子组件传递ref
+  子组件需要修改两个地方：
+    1. export default React.forwardRef(AuthRole);
+    2. useImperativeHandle(ref, () => ({
+            funcs; // 给父组件传递的函数
+        }));
+

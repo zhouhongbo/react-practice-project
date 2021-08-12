@@ -1,16 +1,29 @@
 /* 
   1. 静态界面
+  2. 获取用户列表
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Table, Button, Space, Modal } from "antd";
 
-import { reqAddUser, reqUpdateUser } from "../../api";
+import { reqAddUser, reqUpdateUser, reqUsers } from "../../api";
 import AddUser from "./AddUser";
 import UpdateUser from "./UpdateUser";
 
 export default function User() {
+  const [users, setUsers] = useState([])
   const [isAdd, setIsAdd] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
+
+  useEffect(() => {
+    getUsers();
+  }, [])
+
+  const getUsers = async () => {
+    const result = await reqUsers();
+    if (result.status === 0) {
+      setUsers(result.data.users)
+    }
+  }
 
   const cancelAdd = () => {
     setIsAdd(false);
@@ -27,16 +40,6 @@ export default function User() {
   const updateUser = () => {
     setIsUpdate(false);
   }
-
-  const dataSource = [
-    {
-      username: "test",
-      email: "110@163.com",
-      phone: "110",
-      create_time: Date.now(),
-      role_id: "经理",
-    },
-  ];
 
   const columns = [
     {
@@ -76,7 +79,7 @@ export default function User() {
   );
   return (
     <Card title={title}>
-      <Table dataSource={dataSource} columns={columns} rowKey="role_id"/>
+      <Table dataSource={users} columns={columns} rowKey="role_id"/>
       <Modal visible={isAdd} onCancel={cancelAdd} onOk={addUser} closable={false}>
         <AddUser />
       </Modal>

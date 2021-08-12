@@ -12,6 +12,9 @@ export const reqAddUser = (user) => ajax("/manage/user/add", user, "POST");
 // 更新用户
 export const reqUpdateUser = (user) => ajax("", user, "POST");
 
+// 获取用户列表
+export const reqUsers = () => ajax("/manage/user/list");
+
 // 获取分类列表
 export const reqCategorys = (parentId) =>
   ajax("/manage/category/list", { parentId });

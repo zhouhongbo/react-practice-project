@@ -9,6 +9,9 @@ export const reqLogin = (username, password) =>
 // 添加用户
 export const reqAddUser = (user) => ajax("/manage/user/add", user, "POST");
 
+// 更新用户
+export const reqUpdateUser = (user) => ajax("", user, "POST");
+
 // 获取分类列表
 export const reqCategorys = (parentId) =>
   ajax("/manage/category/list", { parentId });
@@ -31,28 +34,39 @@ export const reqSearchProducts = ({
   pageSize,
   searchName,
   searchType,
-}) => ajax("/manage/product/search", { pageNum, pageSize, [searchType]: searchName });
+}) =>
+  ajax("/manage/product/search", {
+    pageNum,
+    pageSize,
+    [searchType]: searchName,
+  });
 
 // 根据id获取分类
-export const reqCategory = (categoryId) => ajax("/manage/category/info", {categoryId});
+export const reqCategory = (categoryId) =>
+  ajax("/manage/category/info", { categoryId });
 
 // 更新商品的状态
-export const reqUpdateStatus = (productId, status) => ajax("/manage/product/updateStatus", {productId, status}, "POST");
+export const reqUpdateStatus = (productId, status) =>
+  ajax("/manage/product/updateStatus", { productId, status }, "POST");
 
 // 删除图片
-export const reqDeleteImg = (name) => ajax("/manage/img/delete", {name}, "POST");
+export const reqDeleteImg = (name) =>
+  ajax("/manage/img/delete", { name }, "POST");
 
 // 添加/修改商品
-export const reqAddorUpdateProduct = (product) => ajax("/manage/product/" + (product._id ? 'update' : 'add'), product, "POST");
+export const reqAddorUpdateProduct = (product) =>
+  ajax("/manage/product/" + (product._id ? "update" : "add"), product, "POST");
 
 // 获取所有角色的列表
 export const reqRoles = () => ajax("/manage/role/list");
 
 // 添加角色
-export const reqAddRole = (roleName) => ajax("/manage/role/add", {roleName}, "POST");
+export const reqAddRole = (roleName) =>
+  ajax("/manage/role/add", { roleName }, "POST");
 
 // 给角色设置权限
-export const reqUpdateRole = ({_id, menus, auth_time, auth_name}) => ajax("/manage/role/update", {_id, menus, auth_time, auth_name}, "POST")
+export const reqUpdateRole = ({ _id, menus, auth_time, auth_name }) =>
+  ajax("/manage/role/update", { _id, menus, auth_time, auth_name }, "POST");
 
 // jsonp请求天气
 export const reqWeather = (city) => {

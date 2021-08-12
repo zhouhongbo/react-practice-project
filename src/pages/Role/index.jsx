@@ -64,6 +64,9 @@ export default function Role() {
     if (result.status === 0){
       message.success('更新成功');
       getRoles();
+      // 更新role
+      role.menus = updateParam.menus;
+      setRole(role);
     } else {
       message.error('更新失败');
     }

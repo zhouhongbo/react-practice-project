@@ -8,13 +8,16 @@ const Item = Form.Item;
 function AuthRole(props, ref) {
   const [checkedKeys, setCheckedKeys] = useState(props.role.menus);
 
+  // useEffect也可以监听props是否改变
+  useEffect(() => {
+    setCheckedKeys(props.role.menus)
+  }, [props]);
+
   useImperativeHandle(ref, () => ({
     getMenus: () => {
       return checkedKeys;
     }
  }));
-
-  
 
   const onCheck = (checkedKeys) => {
     setCheckedKeys(checkedKeys);

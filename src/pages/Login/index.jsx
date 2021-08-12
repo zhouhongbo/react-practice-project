@@ -25,7 +25,7 @@ export default function Login() {
           message.success('登录成功')
           memoryUtil.user = result.data
           storageUtil.setUser(result.data)
-          history.replace('/')
+          history.replace('/home')
         } else {
           message.error('用户名或密码错误')
         }
@@ -38,7 +38,7 @@ export default function Login() {
   // 判断用户是否登录
   const user = memoryUtil.user
   if (user && user._id) {
-    return <Redirect to="/" />
+    return <Redirect to="/home" />
   }
 
   return (

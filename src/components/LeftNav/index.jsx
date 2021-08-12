@@ -1,15 +1,27 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { Link, useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 import { Menu } from "antd";
 
 import "./index.less";
 import logo from "../../assets/images/logo.png";
 import menuList from "../../route/route";
 import memoryUtil from "../../util/memoryUtil";
+import { setHeadTitle } from "../../store/actions";
 
 const { SubMenu } = Menu;
 
-export default function LeftNav() {
+function LeftNav(props) {
+  const history = useHistory();
+  const [path, setPath] = useState('');
+
+  useEffect(() => {
+    if (history.location.pathname.indexOf('/products/product') === 0) {
+      setPath('/products/product');
+    } else {
+      setPath(history.location.pathname);
+    }
+  }, [])
 
   const hasAuth = (item) => {
     const menus = memoryUtil.user.role.menus;
@@ -22,7 +34,7 @@ export default function LeftNav() {
       return false;
     }
   };
-  // 使用数组的map方法
+  
   const renderMenuMap = (menuList) => {
     return menuList.map((item) => {
       if (hasAuth(item)) {
@@ -33,44 +45,19 @@ export default function LeftNav() {
             </SubMenu>
           );
         } else {
+          if (item.key === path || path.indexOf(item.key) === 0) {
+            // 判断item是否为当前item
+            props.setHeadTitle(item.title);
+          } 
           return (
             <Menu.Item key={item.key} icon={<item.icon />}>
-              <Link to={item.key}>{item.title}</Link>
+              <Link to={item.key} onClick={() => props.setHeadTitle(item.title)}>{item.title}</Link>
             </Menu.Item>
           );
         }
       }
     });
   };
-  // 使用数组的reduce方法
-  const renderMenuReduce = (menuList) => {
-    return menuList.reduce((result, item) => {
-      if (hasAuth(item)) {
-        if (item.children) {
-          result.push(
-            <SubMenu key={item.key} title={item.title} icon={<item.icon />}>
-              {renderMenuReduce(item.children)}
-            </SubMenu>
-          );
-        } else {
-          result.push(
-            <Menu.Item key={item.key} icon={<item.icon />}>
-              <Link to={item.key}>{item.title}</Link>
-            </Menu.Item>
-          );
-        }
-      }
-      return result;
-    }, []);
-  };
-
-  // 获取当前路径
-  const history = useHistory();
-  let path = history.location.pathname;
-
-  if (path.indexOf('/products/product') === 0) {
-    path = '/products/product';
-  }
 
   return (
     <div className="left-nav">
@@ -83,10 +70,14 @@ export default function LeftNav() {
         theme="dark"
         selectedKeys={[path]}
         defaultOpenKeys={['/products', '/charts']}
+        onClick={(item) => setPath(item.key)}
       >
-        {renderMenuReduce(menuList)}
-        {/* {renderMenuMap(menuList)} */}
+        {renderMenuMap(menuList)}
       </Menu>
     </div>
   );
 }
+export default connect(
+  state => ({}),
+  {setHeadTitle}
+)(LeftNav);

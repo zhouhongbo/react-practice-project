@@ -6,10 +6,10 @@
   5. 删除用户
  */
 import React, { useState, useEffect, useRef } from "react";
-import { Card, Table, Button, Space, Modal, message } from "antd";
+import { Card, Table, Button, Space, Modal, message, Popconfirm } from "antd";
 import moment from "moment";
 
-import { reqAddUser, reqUpdateUser, reqUsers, reqRoles } from "../../api";
+import { reqAddUser, reqUpdateUser, reqUsers, reqRoles, reqDeleteUser } from "../../api";
 import AddUser from "./AddUser";
 import UpdateUser from "./UpdateUser";
 
@@ -81,6 +81,14 @@ export default function User() {
     });
   };
 
+  const deleteUser = async (user) => {
+    const result = await reqDeleteUser(user._id);
+    if (result.status === 0) {
+      message.success('删除成功');
+      getUsers();
+    }
+  }
+
   const columns = [
     {
       title: "用户名",
@@ -115,7 +123,12 @@ export default function User() {
             setIsUpdate(true);
             setUser(user);
           }}>修改</a>
-          <a>删除</a>
+          <Popconfirm
+            title="确认删除？"
+            onConfirm={() => deleteUser(user)}
+          >
+            <a>删除</a>
+          </Popconfirm>
         </Space>
       ),
     },

@@ -9,6 +9,9 @@ export const reqLogin = (username, password) =>
 // 添加用户
 export const reqAddUser = (user) => ajax("/manage/user/add", user, "POST");
 
+// 删除用户
+export const reqDeleteUser = (userId) => ajax("/manage/user/delete", {userId}, "POST")
+
 // 更新用户
 export const reqUpdateUser = (user) => ajax("/manage/user/update", user, "POST");
 

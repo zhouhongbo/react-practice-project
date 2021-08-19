@@ -5,139 +5,146 @@
   4. 修改用户
   5. 删除用户
  */
-import React, { useState, useEffect, useRef } from "react";
-import { Card, Table, Button, Space, Modal, message, Popconfirm } from "antd";
-import moment from "moment";
+import React, { useState, useEffect, useRef } from 'react'
+import { Card, Table, Button, Space, Modal, message, Popconfirm } from 'antd'
+import moment from 'moment'
 
-import { reqAddUser, reqUpdateUser, reqUsers, reqRoles, reqDeleteUser } from "../../api";
-import AddUser from "./AddUser";
-import UpdateUser from "./UpdateUser";
+import {
+  reqAddUser,
+  reqUpdateUser,
+  reqUsers,
+  reqRoles,
+  reqDeleteUser,
+} from '../../api'
+import AddUser from './AddUser'
+import UpdateUser from './UpdateUser'
 
 export default function User() {
-  const addRef = useRef();
-  const updateRef = useRef();
+  const addRef = useRef()
+  const updateRef = useRef()
 
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState({});
-  const [roles, setRoles] = useState([]);
-  const [isAdd, setIsAdd] = useState(false);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [users, setUsers] = useState([])
+  const [user, setUser] = useState({})
+  const [roles, setRoles] = useState([])
+  const [isAdd, setIsAdd] = useState(false)
+  const [isUpdate, setIsUpdate] = useState(false)
 
   useEffect(() => {
-    getUsers();
-    getRoles();
-  }, []);
+    getUsers()
+    getRoles()
+  }, [])
 
   const getUsers = async () => {
-    const result = await reqUsers();
+    const result = await reqUsers()
     if (result.status === 0) {
-      setUsers(result.data.users);
+      setUsers(result.data.users)
     }
-  };
+  }
 
   const getRoles = async () => {
-    const result = await reqRoles();
+    const result = await reqRoles()
     if (result.status === 0) {
-      setRoles(result.data);
+      setRoles(result.data)
     }
-  };
+  }
 
   const cancelAdd = () => {
-    setIsAdd(false);
-  };
+    setIsAdd(false)
+  }
 
   const cancelUpdate = () => {
-    setIsUpdate(false);
-  };
+    setIsUpdate(false)
+  }
 
   const addUser = () => {
-    setIsAdd(false);
+    setIsAdd(false)
 
-    const addForm = addRef.current.getAddForm();
+    const addForm = addRef.current.getAddForm()
     addForm.validateFields().then(async (values) => {
-      const result = await reqAddUser(values);
+      const result = await reqAddUser(values)
       if (result.status === 0) {
-        message.success("添加用户成功");
-        addForm.resetFields();
-        getUsers();
+        message.success('添加用户成功')
+        addForm.resetFields()
+        getUsers()
       } else {
-        message.error("添加用户失败");
+        message.error('添加用户失败')
       }
-    });
-  };
+    })
+  }
 
   const updateUser = () => {
-    setIsUpdate(false);
+    setIsUpdate(false)
 
-    const updateForm = updateRef.current.getUpdateForm();
+    const updateForm = updateRef.current.getUpdateForm()
     updateForm.validateFields().then(async (values) => {
-      const result = await reqUpdateUser({...values, _id: user._id});
+      const result = await reqUpdateUser({ ...values, _id: user._id })
       if (result.status === 0) {
-        message.success("修改用户成功");
-        getUsers();
+        message.success('修改用户成功')
+        getUsers()
       } else {
-        message.error("修改用户失败");
+        message.error('修改用户失败')
       }
-    });
-  };
+    })
+  }
 
   const deleteUser = async (user) => {
-    const result = await reqDeleteUser(user._id);
+    const result = await reqDeleteUser(user._id)
     if (result.status === 0) {
-      message.success('删除成功');
-      getUsers();
+      message.success('删除成功')
+      getUsers()
     }
   }
 
   const columns = [
     {
-      title: "用户名",
-      dataIndex: "username",
+      title: '用户名',
+      dataIndex: 'username',
     },
     {
-      title: "邮箱",
-      dataIndex: "email",
+      title: '邮箱',
+      dataIndex: 'email',
     },
     {
-      title: "电话",
-      dataIndex: "phone",
+      title: '电话',
+      dataIndex: 'phone',
     },
     {
-      title: "注册时间",
-      dataIndex: "create_time",
-      render: (createTime) => moment(createTime).format("YYYY-MM-DD h:mm:ss"),
+      title: '注册时间',
+      dataIndex: 'create_time',
+      render: (createTime) => moment(createTime).format('YYYY-MM-DD h:mm:ss'),
     },
     {
-      title: "所属角色",
-      dataIndex: "role_id",
+      title: '所属角色',
+      dataIndex: 'role_id',
       render: (roleId) =>
         roleId && roles.length !== 0
           ? roles.find((role) => role._id === roleId).name
           : null,
     },
     {
-      title: "操作",
+      title: '操作',
       render: (user) => (
         <Space>
-          <a onClick={() => {
-            setIsUpdate(true);
-            setUser(user);
-          }}>修改</a>
-          <Popconfirm
-            title="确认删除？"
-            onConfirm={() => deleteUser(user)}
+          <a
+            onClick={() => {
+              setIsUpdate(true)
+              setUser(user)
+            }}
           >
+            修改
+          </a>
+          <Popconfirm title="确认删除？" onConfirm={() => deleteUser(user)}>
             <a>删除</a>
           </Popconfirm>
         </Space>
       ),
     },
-  ];
+  ]
   const title = (
     <Button type="primary" onClick={() => setIsAdd(true)}>
       创建用户
     </Button>
-  );
+  )
   return (
     <Card title={title}>
       <Table dataSource={users} columns={columns} rowKey="_id" />
@@ -155,8 +162,8 @@ export default function User() {
         onOk={updateUser}
         closable={false}
       >
-        <UpdateUser ref={updateRef} roles={roles} user={user}/>
+        <UpdateUser ref={updateRef} roles={roles} user={user} />
       </Modal>
     </Card>
-  );
+  )
 }

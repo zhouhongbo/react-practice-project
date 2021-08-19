@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import moment from "moment";
-import { Modal } from "antd";
+import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import moment from 'moment'
+import { Modal } from 'antd'
 
-import { reqWeather } from "../../api";
-import { logout } from "../../store/actions";
-import "./index.less";
+import { reqWeather } from '../../api'
+import { logout } from '../../store/actions'
+import './index.less'
 
 function Header(props) {
-  const [time, setTime] = useState(moment().format("YYYY-MM-DD h:mm:ss"));
-  const [weather, setWeather] = useState("");
+  const [time, setTime] = useState(moment().format('YYYY-MM-DD h:mm:ss'))
+  const [weather, setWeather] = useState('')
 
   useEffect(() => {
     let intervalId = setInterval(() => {
-      setTime(moment().format("YYYY-MM-DD h:mm:ss"));
-    }, 1000);
-    getWeather("110115"); // 北京大兴区的天气
+      setTime(moment().format('YYYY-MM-DD h:mm:ss'))
+    }, 1000)
+    getWeather('110115') // 北京大兴区的天气
 
     return function clean() {
-      clearInterval(intervalId);
-    };
-  }, []);
+      clearInterval(intervalId)
+    }
+  }, [])
 
   const getWeather = async (city) => {
-    const result = await reqWeather(city);
-    setWeather(result);
-  };
+    const result = await reqWeather(city)
+    setWeather(result)
+  }
 
   const logout = () => {
     Modal.confirm({
-      content: "确认退出吗？",
+      content: '确认退出吗？',
       onOk() {
-        props.logout();
+        props.logout()
       },
-    });
-  };
+    })
+  }
 
   return (
     <div className="header">
@@ -50,7 +50,7 @@ function Header(props) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 export default connect(
@@ -59,4 +59,4 @@ export default connect(
     user: state.user,
   }),
   { logout }
-)(Header);
+)(Header)

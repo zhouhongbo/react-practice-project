@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useImperativeHandle } from "react";
-import { Card, Input, Form, Select } from "antd";
+import React, { useState, useEffect, useImperativeHandle } from 'react'
+import { Card, Input, Form, Select } from 'antd'
 
-const { Item } = Form;
-const { Option } = Select;
+const { Item } = Form
+const { Option } = Select
 
 function UpdateUser(props, ref) {
-  const [updateForm] = Form.useForm();
+  const [updateForm] = Form.useForm()
 
   useEffect(() => {
-    updateForm.resetFields();
-    updateForm.setFieldsValue(props.user);
-  }, [props.user]);
+    updateForm.resetFields()
+    updateForm.setFieldsValue(props.user)
+  }, [props.user])
 
   useImperativeHandle(ref, () => ({
     getUpdateForm: () => updateForm,
-  }));
+  }))
 
   return (
     <Card title="修改用户信息">
@@ -39,6 +39,6 @@ function UpdateUser(props, ref) {
         </Item>
       </Form>
     </Card>
-  );
+  )
 }
-export default React.forwardRef(UpdateUser);
+export default React.forwardRef(UpdateUser)

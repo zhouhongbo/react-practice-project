@@ -1,61 +1,61 @@
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router";
-import { Card, Select, Input, Button, Table, Space, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router'
+import { Card, Select, Input, Button, Table, Space, message } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 
-import { reqProducts, reqSearchProducts, reqUpdateStatus } from "../../api";
-import { PAGE_SIZE } from "../../util/constants";
+import { reqProducts, reqSearchProducts, reqUpdateStatus } from '../../api'
+import { PAGE_SIZE } from '../../util/constants'
 
-const Option = Select.Option;
+const Option = Select.Option
 
 export default function ProductHome() {
-  const history = useHistory();
+  const history = useHistory()
 
-  const [products, setProducts] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [searchName, setSearchName] = useState("");
-  const [searchType, setSearchType] = useState("productName");
-  const [pageNum, setPageNum] = useState(1);
+  const [products, setProducts] = useState([])
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(false)
+  const [searchName, setSearchName] = useState('')
+  const [searchType, setSearchType] = useState('productName')
+  const [pageNum, setPageNum] = useState(1)
 
   useEffect(async () => {
-    getProducts(1);
-  }, []);
+    getProducts(1)
+  }, [])
 
   const getProducts = async (pageNum) => {
     setPageNum(pageNum)
-    setLoading(true);
+    setLoading(true)
 
-    let result = {};
+    let result = {}
     if (searchName) {
       result = await reqSearchProducts({
         pageNum,
         pageSize: PAGE_SIZE,
         searchName,
         searchType,
-      });
+      })
     } else {
-      result = await reqProducts(pageNum, PAGE_SIZE);
+      result = await reqProducts(pageNum, PAGE_SIZE)
     }
 
-    setLoading(false);
+    setLoading(false)
     if (result.status === 0) {
-      setProducts(result.data.list);
-      setTotal(result.data.total);
+      setProducts(result.data.list)
+      setTotal(result.data.total)
     }
-  };
+  }
 
   const updateStatus = async (productId, status) => {
-    const result = await reqUpdateStatus(productId, status);
+    const result = await reqUpdateStatus(productId, status)
     if (result.status === 0) {
       if (status === 1) {
-        message.success("上架成功！");
+        message.success('上架成功！')
       } else {
-        message.success("下架成功！");
+        message.success('下架成功！')
       }
     }
-    getProducts(pageNum);
-  };
+    getProducts(pageNum)
+  }
 
   const title = (
     <span>
@@ -69,7 +69,7 @@ export default function ProductHome() {
       </Select>
       <Input
         placeholder="关键字"
-        style={{ width: 150, margin: "0 15px" }}
+        style={{ width: 150, margin: '0 15px' }}
         value={searchName}
         onChange={(event) => setSearchName(event.target.value)}
       />
@@ -77,67 +77,77 @@ export default function ProductHome() {
         搜索
       </Button>
     </span>
-  );
+  )
   const extra = (
-    <Button type="primary" icon={<PlusOutlined />} onClick={() => history.push('/products/product/addupdate')}>
+    <Button
+      type="primary"
+      icon={<PlusOutlined />}
+      onClick={() => history.push('/products/product/addupdate')}
+    >
       添加商品
     </Button>
-  );
+  )
 
   const columns = [
     {
-      title: "商品名称",
-      dataIndex: "name",
+      title: '商品名称',
+      dataIndex: 'name',
       width: 200,
     },
     {
-      title: "商品描述",
-      dataIndex: "desc",
+      title: '商品描述',
+      dataIndex: 'desc',
     },
     {
-      title: "价格",
-      dataIndex: "price",
-      render: (price) => "￥" + price,
+      title: '价格',
+      dataIndex: 'price',
+      render: (price) => '￥' + price,
       width: 100,
     },
     {
-      title: "状态",
+      title: '状态',
       render: (product) => {
-        const { status, _id } = product;
+        const { status, _id } = product
         return (
           <span>
             <Button
               type="primary"
               onClick={() => updateStatus(_id, status === 1 ? 2 : 1)}
             >
-              {status === 1 ? "下架" : "上架"}
+              {status === 1 ? '下架' : '上架'}
             </Button>
-            <span>{status === 1 ? "在售" : "已下架"}</span>
+            <span>{status === 1 ? '在售' : '已下架'}</span>
           </span>
-        );
+        )
       },
       width: 100,
     },
     {
-      title: "操作",
+      title: '操作',
       render: (product) => {
         return (
           <Space>
             {/* 把product传递给目标路由组件 */}
             <a
               onClick={() =>
-                history.push("/products/product/detail", { product })
+                history.push('/products/product/detail', { product })
               }
             >
               详情
             </a>
-            <a onClick={() => history.push('/products/product/addupdate', { product })}>修改</a>
+            <a
+              onClick={() =>
+                history.push('/products/product/addupdate', { product })
+              }
+            >
+              修改
+            </a>
           </Space>
-        );
+        )
       },
       width: 100,
     },
-  ];
+  ]
   return (
     <Card title={title} extra={extra}>
       <Table
@@ -154,5 +164,5 @@ export default function ProductHome() {
         }}
       />
     </Card>
-  );
+  )
 }

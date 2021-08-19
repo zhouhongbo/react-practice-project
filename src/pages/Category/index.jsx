@@ -1,112 +1,112 @@
-import React, { useState, useEffect } from "react";
-import { Card, Table, Button, Space, Modal, message } from "antd";
-import { PlusOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from 'react'
+import { Card, Table, Button, Space, Modal, message } from 'antd'
+import { PlusOutlined, ArrowRightOutlined } from '@ant-design/icons'
 
-import { reqCategorys, reqUpdateCategory, reqAddCategory } from "../../api";
-import AddForm from "./AddForm";
-import UpdateForm from "./UpdateForm";
+import { reqCategorys, reqUpdateCategory, reqAddCategory } from '../../api'
+import AddForm from './AddForm'
+import UpdateForm from './UpdateForm'
 
 export default function Category() {
-  const [categorys, setCategorys] = useState([]);
-  const [subCategorys, setSubCategorys] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [parentId, setParentId] = useState("0");
-  const [parentName, setParentName] = useState("");
-  const [showStatus, setShowStatus] = useState(0); // 标识显示的对话框，0都不显示，1显示添加，2显示更新
-  const [category, setCategory] = useState("");
-  const [updateForm, setUpdateForm] = useState();
-  const [addForm, setAddForm] = useState();
+  const [categorys, setCategorys] = useState([])
+  const [subCategorys, setSubCategorys] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [parentId, setParentId] = useState('0')
+  const [parentName, setParentName] = useState('')
+  const [showStatus, setShowStatus] = useState(0) // 标识显示的对话框，0都不显示，1显示添加，2显示更新
+  const [category, setCategory] = useState('')
+  const [updateForm, setUpdateForm] = useState()
+  const [addForm, setAddForm] = useState()
 
   useEffect(async () => {
-    getCategorys();
-  }, [parentId]);
+    getCategorys()
+  }, [parentId])
 
   const showSubCategorys = async (category) => {
-    setParentId(category._id);
-    setParentName(category.name);
-  };
+    setParentId(category._id)
+    setParentName(category.name)
+  }
 
   const getCategorys = async () => {
-    setLoading(true);
-    const result = await reqCategorys(parentId);
+    setLoading(true)
+    const result = await reqCategorys(parentId)
     if (result.status === 0) {
-      if (parentId === "0") setCategorys(result.data);
-      else setSubCategorys(result.data);
+      if (parentId === '0') setCategorys(result.data)
+      else setSubCategorys(result.data)
     } else {
-      message.error("获取列表失败！");
+      message.error('获取列表失败！')
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   const showUpdate = (category) => {
-    setShowStatus(2);
-    setCategory(category);
-  };
+    setShowStatus(2)
+    setCategory(category)
+  }
 
   const addCategory = () => {
     addForm.validateFields().then(async (values) => {
-      setShowStatus(0);
+      setShowStatus(0)
 
-      const result = await reqAddCategory(values.parentId, values.categoryName);
+      const result = await reqAddCategory(values.parentId, values.categoryName)
       if (result.status === 0) {
         if (values.parentId === parentId) {
-          getCategorys();
+          getCategorys()
         }
       }
 
-      addForm.resetFields();
-    });
-  };
+      addForm.resetFields()
+    })
+  }
 
   const getUpdateForm = (form) => {
-    setUpdateForm(form);
-  };
+    setUpdateForm(form)
+  }
 
   const getAddForm = (form) => {
-    setAddForm(form);
-  };
+    setAddForm(form)
+  }
 
   const updateCategory = () => {
     updateForm.validateFields().then(async (values) => {
-      setShowStatus(0);
-      const result = await reqUpdateCategory(category._id, values.categoryName);
+      setShowStatus(0)
+      const result = await reqUpdateCategory(category._id, values.categoryName)
 
       if (result.status === 0) {
-        getCategorys();
+        getCategorys()
       }
 
-      updateForm.resetFields();
-    });
-  };
+      updateForm.resetFields()
+    })
+  }
 
   const columns = [
     {
-      title: "分类的名称",
-      dataIndex: "name",
+      title: '分类的名称',
+      dataIndex: 'name',
     },
     {
-      title: "操作",
+      title: '操作',
       width: 300,
       render: (category) => (
         <Space size="middle">
           <a onClick={() => showUpdate(category)}>修改分类</a>
-          {parentId === "0" ? (
+          {parentId === '0' ? (
             <a onClick={() => showSubCategorys(category)}>查看子分类</a>
           ) : null}
         </Space>
       ),
     },
-  ];
+  ]
 
   return (
     <Card
       title={
-        parentId === "0" ? (
-          "一级分类列表"
+        parentId === '0' ? (
+          '一级分类列表'
         ) : (
           <span>
-            <a onClick={() => setParentId("0")}>一级分类列表</a>
-            <ArrowRightOutlined style={{ margin: "0 10px" }} />
+            <a onClick={() => setParentId('0')}>一级分类列表</a>
+            <ArrowRightOutlined style={{ margin: '0 10px' }} />
             <span>{parentName}</span>
           </span>
         )
@@ -123,7 +123,7 @@ export default function Category() {
     >
       <Table
         bordered
-        dataSource={parentId === "0" ? categorys : subCategorys}
+        dataSource={parentId === '0' ? categorys : subCategorys}
         columns={columns}
         rowKey="_id"
         pagination={{ defaultPageSize: 10, showQuickJumper: true }}
@@ -134,8 +134,8 @@ export default function Category() {
         visible={showStatus === 1}
         onOk={addCategory}
         onCancel={() => {
-          setShowStatus(0);
-          addForm.resetFields();
+          setShowStatus(0)
+          addForm.resetFields()
         }}
       >
         <AddForm
@@ -149,8 +149,8 @@ export default function Category() {
         visible={showStatus === 2}
         onOk={updateCategory}
         onCancel={() => {
-          setShowStatus(0);
-          updateForm.resetFields();
+          setShowStatus(0)
+          updateForm.resetFields()
         }}
       >
         <UpdateForm
@@ -159,5 +159,5 @@ export default function Category() {
         />
       </Modal>
     </Card>
-  );
+  )
 }

@@ -1,9 +1,5 @@
 import React from 'react'
 
 export default function Pie() {
-  return (
-    <div>
-      Pie
-    </div>
-  )
+  return <div>Pie</div>
 }

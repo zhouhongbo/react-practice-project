@@ -9,64 +9,64 @@ import {
   BarChartOutlined,
   LineChartOutlined,
   PieChartOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons'
 
 const menuList = [
   {
-    title: "首页",
-    key: "/home",
+    title: '首页',
+    key: '/home',
     icon: HomeOutlined,
-    isPublic: true
+    isPublic: true,
   },
   {
-    title: "商品",
-    key: "/products",
+    title: '商品',
+    key: '/products',
     icon: ShopOutlined,
     children: [
       {
-        title: "品类管理",
-        key: "/products/category",
+        title: '品类管理',
+        key: '/products/category',
         icon: AppstoreOutlined,
       },
       {
-        title: "商品管理",
-        key: "/products/product",
+        title: '商品管理',
+        key: '/products/product',
         icon: ShoppingOutlined,
       },
     ],
   },
   {
-    title: "用户管理",
-    key: "/user",
+    title: '用户管理',
+    key: '/user',
     icon: UserOutlined,
   },
   {
-    title: "角色管理",
-    key: "/role",
+    title: '角色管理',
+    key: '/role',
     icon: SafetyOutlined,
   },
   {
-    title: "图形图表",
-    key: "/charts",
+    title: '图形图表',
+    key: '/charts',
     icon: AreaChartOutlined,
     children: [
       {
-        title: "柱形图",
-        key: "/charts/bar",
+        title: '柱形图',
+        key: '/charts/bar',
         icon: BarChartOutlined,
       },
       {
-        title: "折线图",
-        key: "/charts/line",
+        title: '折线图',
+        key: '/charts/line',
         icon: LineChartOutlined,
       },
       {
-        title: "饼图",
-        key: "/charts/pie",
+        title: '饼图',
+        key: '/charts/pie',
         icon: PieChartOutlined,
       },
     ],
   },
-];
+]
 
-export default menuList;
+export default menuList
